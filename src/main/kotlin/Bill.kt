@@ -16,6 +16,7 @@ class Bill(private var limitingAmount: Double) {
     fun pay(amount: Double) {
         if (amount <= currentDebt) {
             currentDebt -= amount
+            println("Змінено!")
         } else {
             println("Спроба оплати більшої суми, ніж борг на рахунку")
         }
@@ -23,5 +24,6 @@ class Bill(private var limitingAmount: Double) {
 
     fun changeTheLimit(amount: Double) {
         limitingAmount = amount
+        println("Змінено!")
     }
 }
