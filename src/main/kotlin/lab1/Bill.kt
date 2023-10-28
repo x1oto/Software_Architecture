@@ -1,3 +1,5 @@
+package lab1
+
 class Bill(private var limitingAmount: Double) {
     private var currentDebt: Double = 0.0
 

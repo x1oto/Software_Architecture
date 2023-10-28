@@ -1,3 +1,5 @@
+package lab1
+
 class Operator(
     val ID: Int,
     private val talkingCharge: Double,
@@ -5,11 +7,11 @@ class Operator(
     private val networkCharge: Double,
     private val discountRate: Int
 ) {
-    fun calculateTalkingCost(minute: Int, /* customer: Customer */): Double {
+    fun calculateTalkingCost(minute: Int, /* customer: lab1.Customer */): Double {
         return minute * applyDiscount(charge = talkingCharge)
     }
 
-    fun calculateMessageCost(quantity: Int /*, customer: Customer, other: Customer*/ ): Double {
+    fun calculateMessageCost(quantity: Int /*, customer: lab1.Customer, other: lab1.Customer*/ ): Double {
         return quantity * applyDiscount(charge = messageCost)
     }
 
