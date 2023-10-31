@@ -6,20 +6,10 @@ abstract class Container(val id: Int, val weight: Int) {
 }
 
 class BasicContainer(id: Int, weight: Int) : Container(id, weight) {
-
-//    init {
-//        require(weight <= 3000) { "Weight of BasicContainer should be less than or equal to 3000" }
-//    }
-
-    override fun consumption() = 2.50 * weight
+    override fun consumption() = 2.5 * weight
 }
 
 open class HeavyContainer(id: Int, weight: Int) : Container(id, weight) {
-
-//    init {
-//        require(weight > 3000) { "Weight of HeavyContainer should be more than 3000" }
-//    }
-
     override fun consumption(): Double = 3.0 * weight
 }
 

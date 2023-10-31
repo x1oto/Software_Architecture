@@ -8,15 +8,15 @@ class Port(
     private val longitude: Double
 ): IPort {
     var containersList = mutableListOf<Container>() //containers in port
-    private var currentShipSet = mutableSetOf<Ship>() //keeps track of the ships currently here;
-    private var historyShipSet = mutableSetOf<Ship>() //keeps track of every ship that has visited;
+    private var current = mutableListOf<Ship>() //keeps track of the ships currently here;
+    private var history = mutableListOf<Ship>() //keeps track of every ship that has visited;
 
-    override fun incomingShip(ship: Ship) {
-        currentShipSet.add(ship)
+    override fun incomingShip(s: Ship) {
+        if (s !in history) current.add(s)
     }
 
-    override fun outgoingShip(ship: Ship) {
-        historyShipSet.add(ship)
+    override fun outgoingShip(s: Ship) {
+        if (s !in history) history.add(s)
     }
 
     fun getDistance(other: Port): Double {
