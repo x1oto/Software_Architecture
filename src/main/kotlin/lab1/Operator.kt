@@ -1,26 +1,20 @@
 package lab1
 
 class Operator(
-    val ID: Int,
+    val name: String,
     private val talkingCharge: Double,
     private val messageCost: Double,
     private val networkCharge: Double,
-    private val discountRate: Int
+    customerAge: Int
 ) {
-    fun calculateTalkingCost(minute: Int, /* customer: lab1.Customer */): Double {
-        return minute * applyDiscount(charge = talkingCharge)
-    }
-
-    fun calculateMessageCost(quantity: Int /*, customer: lab1.Customer, other: lab1.Customer*/ ): Double {
-        return quantity * applyDiscount(charge = messageCost)
-    }
-
-    fun calculateNetworkCost(amount: Double): Double {
-        return amount * applyDiscount(charge = networkCharge)
-    }
-
+    private val discountRate = customerAge
     private fun applyDiscount(charge: Double): Double {
         val discountedRate = if (discountRate < 18 || discountRate > 65) discountRate else 0
         return charge * (1 - discountedRate / 100.0)
     }
+    fun calculateTalkingCost(minute: Int) = minute * applyDiscount(charge = talkingCharge)
+
+    fun calculateMessageCost(quantity: Int) = quantity * applyDiscount(charge = messageCost)
+
+    fun calculateNetworkCost(amount: Double) = amount * applyDiscount(charge = networkCharge)
 }

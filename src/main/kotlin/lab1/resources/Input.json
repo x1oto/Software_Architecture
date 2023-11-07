@@ -1,0 +1,57 @@
+{
+  "operators": [
+    {
+      "name": "Vodafone",
+      "talkingCost": 2.0,
+      "messageCost": 0.2,
+      "networkCost": 0.05,
+      "maxLimit": 20
+    },
+    {
+      "name": "Life",
+      "talkingCost": 1.5,
+      "messageCost": 0.15,
+      "networkCost": 0.04,
+      "maxLimit": 10
+    }
+  ],
+  "bills": [
+    {
+      "currentDebt": 100.0
+    },
+    {
+      "currentDebt": 1000.0
+    }
+  ],
+  "customers": [
+    {
+      "name": "Client 0",
+      "operators": [0, 1],
+      "bills": [0, 1]
+    },
+    {
+      "name": "Client 1",
+      "operators": [0, 1],
+      "bills": [0, 1]
+    }
+  ],
+  "actions": [
+    {
+      "action": "connection",
+      "customerIndex": 0,
+      "amount": 1010.1
+    },
+    {
+      "action": "talk",
+      "customerIndex": 0,
+      "otherCustomerIndex": 1,
+      "minutes": 30
+    },
+    {
+      "action": "sms",
+      "customerIndex": 0,
+      "otherCustomerIndex": 1,
+      "quantity": 5
+    }
+  ]
+}
