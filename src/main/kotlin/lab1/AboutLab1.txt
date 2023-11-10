@@ -1,0 +1,38 @@
+*****************************
+AboutLab1.txt - Assignment Overview
+*****************************
+
+**Software Architecture Assignment 1 - Communication System**
+
+**CS 121, Third Year Students**
+
+**Due Date: September 23, 2023**
+
+*Overview:*
+The first assignment in the Software Architecture course challenges third-year CS 121 students to implement associations and aggregations between classes. The focus is on building a simplified communication system involving Customers, Operators, and Bills. Basic knowledge in object-oriented design is required, and students have the flexibility to use any programming language supporting OOP. Proper code commenting is emphasized.
+
+*Description:*
+This assignment delves into the implementation of a basic communication system, reflecting the significant technological revolution in Communication Systems. Students are tasked with creating classes for Customers, Operators, and Bills, with interactions defined by specific actions and costs. The assignment emphasizes proper class structure and encourages students to think about the design before implementation.
+
+*Classes and Implementation Details:*
+Four classes are central to this project: Main, Customer, Operator, and Bill. The Main class handles input-output operations, and students are provided with some parts of it, including input from a file (JSON or hardcoded) and output of desired results. The other three classes are initially empty, and students are expected to fill them based on given directions.
+
+*Main Class:*
+The Main class manages general input-output operations, reading directions from an input file, performing actions, and printing results. Three arrays—Customer[], Operator[], and Bill[]—store corresponding data. Students need to initialize and update these arrays as new objects are created.
+
+*Customer Class:*
+The Customer class includes fields such as ID, name, age, operators, and bills. It features methods for talking, messaging, connecting to the internet, and getters/setters for age, operator, and bill.
+
+*Operator Class:*
+The Operator class includes fields like ID, talkingCharge, messageCost, networkCharge, and discountRate. It has methods for calculating costs related to talking, messaging, and internet usage, along with getters/setters.
+
+*Bill Class:*
+The Bill class contains fields limitingAmount and currentDebt, with methods for checking, adding, paying bills, and changing the limit. It includes getters for limitingAmount and currentDebt.
+
+*Input Format:*
+The input involves setting the number of customers (N) and operators (M), followed by implementing various operations such as creating customers, operators, talking, messaging, internet usage, bill payment, changing operators, and changing bill limits.
+
+*Instructions:*
+Calculations for charges are primarily handled in the Customer, Operator, and Bill classes. Discounts are applied based on age and shared operators. Actions are checked against bill limits before execution. The assumption is made that every customer has enough money to pay their bills. IDs for Customers, Operators, and Bills start from 0. Additional fields or methods can be declared, but the provided ones must exist with the same parameters and names.
+
+*****************************

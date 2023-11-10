@@ -4,12 +4,12 @@ import kotlin.math.*
 
 class Port(
     val id: Int,
-    private val latitude: Double,
-    private val longitude: Double
+    val latitude: Double,
+    val longitude: Double,
+    var containersList: MutableList<Container>
 ): IPort {
-    var containersList = mutableListOf<Container>() //containers in port
-    private var current = mutableListOf<Ship>() //keeps track of the ships currently here;
-    private var history = mutableListOf<Ship>() //keeps track of every ship that has visited;
+    var current = mutableListOf<Ship>() //keeps track of the ships currently here;
+    var history = mutableListOf<Ship>() //keeps track of every ship that has visited;
 
     override fun incomingShip(s: Ship) {
         if (s !in history) current.add(s)

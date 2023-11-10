@@ -3,22 +3,14 @@
     {
       "id": 0,
       "latitude": 48.8566,
-      "longitude": 2.3522
+      "longitude": 2.3522,
+      "container": [0, 1]
     },
     {
       "id": 1,
       "latitude": 40.7128,
-      "longitude": -74.0060
-    },
-    {
-      "id": 2,
-      "latitude": 40.4168,
-      "longitude": -3.7038
-    },
-    {
-      "id": 3,
-      "latitude": 51.5074,
-      "longitude": -0.1278
+      "longitude": -74.0060,
+      "container": []
     }
   ],
 
@@ -75,67 +67,58 @@
     }
   ],
 
-  "shipSpecs": {
-    "id": 0,
-    "fuel": 90000.0,
-    "port": 0,
-    "totalWeightCapacity": 12000,
-    "maxNumberOfAllContainers": 15,
-    "maxNumberOfBasicContainers": 4,
-    "maxNumberOfHeavyContainers": 6,
-    "maxNumberOfRefrigeratedContainers": 4,
-    "maxNumberOfLiquidContainers": 3,
-    "fuelConsumptionPerKM": 10.5
-  },
+  "ships": [
+    {
+      "id": 0,
+      "fuel": 90000.0,
+      "port": 0,
+      "totalWeightCapacity": 12000,
+      "maxNumberOfAllContainers": 15,
+      "maxNumberOfBasicContainers": 4,
+      "maxNumberOfHeavyContainers": 6,
+      "maxNumberOfRefrigeratedContainers": 4,
+      "maxNumberOfLiquidContainers": 3,
+      "fuelConsumptionPerKM": 10.5
+    },
+    {
+      "id": 1,
+      "fuel": 90000.0,
+      "port": 0,
+      "totalWeightCapacity": 12000,
+      "maxNumberOfAllContainers": 15,
+      "maxNumberOfBasicContainers": 4,
+      "maxNumberOfHeavyContainers": 6,
+      "maxNumberOfRefrigeratedContainers": 4,
+      "maxNumberOfLiquidContainers": 3,
+      "fuelConsumptionPerKM": 10.5
+    }
+  ],
 
   "actions": [
     {
-      "action": "load",
-      "containers": [0, 1]
-    },
-    {
-      "action": "load",
-      "containers": [2]
-    },
-    {
-      "action": "load",
-      "containers": [3, 4, 5]
-    },
-    {
-      "action": "unload",
-      "containers": [3]
-    },
-    {
-      "action": "refuel",
-      "newFuel": 20000.0
+      "action": "sail",
+      "port": 1,
+      "ship": 0
     },
     {
       "action": "sail",
-      "port": 1
-    },
-    {
-      "action": "refuel",
-      "newFuel": 2000.0
-    },
-    {
-      "action": "unload",
-      "containers": [0, 1]
+      "port": 0,
+      "ship": 1
     },
     {
       "action": "load",
-      "containers": [6, 7, 8, 9]
+      "containers": [2, 5],
+      "ship": 0
     },
     {
-      "action": "sail",
-      "port": 2
+      "action": "load",
+      "containers": [2, 5],
+      "ship": 0
     },
     {
       "action": "unload",
-      "containers": [2, 5]
-    },
-    {
-      "action": "sail",
-      "port": 3
+      "containers": [2, 5],
+      "ship": 0
     }
   ]
 }

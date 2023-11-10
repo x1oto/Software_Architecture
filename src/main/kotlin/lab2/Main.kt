@@ -1,21 +1,24 @@
 package lab2
 
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
 import java.io.File
 
 data class PortData(
     val id: Int,
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val current: List<String>,
+    val history: List<String>,
+    val container: List<String>
 )
 
 data class ActionData(
     val action: String,
     val containers: List<Int>,
     val newFuel: Double,
-    val port: Int
+    val port: Int,
+    val ship: Int
 )
 
 data class ContainerData(
@@ -24,95 +27,144 @@ data class ContainerData(
     val type: String
 )
 
-data class ShipSpecificationsData(
+data class ShipData(
     val id: Int,
     val fuel: Double,
-    val port: Int,
+    val portId: Int,
     val totalWeightCapacity: Int,
     val maxNumberOfAllContainers: Int,
     val maxNumberOfBasicContainers: Int,
     val maxNumberOfHeavyContainers: Int,
     val maxNumberOfRefrigeratedContainers: Int,
     val maxNumberOfLiquidContainers: Int,
-    val fuelConsumptionPerKM: Double
-)
-
-data class ShipActionResult(
-    val massage: String
+    val fuelConsumptionPerKM: Double,
+    val containers: List<String>
 )
 
 fun main() {
-    val actionsResults = mutableListOf<ShipActionResult>()
+    val (gson, jsonObject) = loadJsonAndCreateGsonMap()
 
-    val (jsonString, gson, jsonObject) = loadJsonAndCreateGsonMap()
+    val containers = getContainers(jsonObject, gson)
+    val ports = containers?.let { getPorts(jsonObject, gson, it) }
+    val ship = ports?.let { getShips(jsonObject, gson, it) }
 
-    val ports = getPorts(jsonObject, gson, actionsResults)
-    val containers = getContainers(jsonObject, gson, actionsResults)
-    val ship = ports?.let { getShip(gson, jsonString, it, actionsResults) }
+    val outputPorts = mutableListOf<PortData>()
+    val outputShips = mutableListOf<ShipData>()
 
-
-    if (ship != null && containers != null) {
-        loadAndExecuteActionsFromJson(jsonObject, gson, ship, containers, ports, actionsResults)
+    if (ship != null) {
+        loadAndExecuteActionsFromJson(jsonObject, gson, ship, containers, ports, outputPorts, outputShips)
     }
-    createJsonBasedOnActions(gson, actionsResults)
+    createJsonBasedOnActions(gson, outputPorts, outputShips)
+}
+
+private fun loadJsonAndCreateGsonMap(): Pair<Gson, Map<*, *>> {
+    val jsonString = File("src/main/kotlin/lab2/Input.json").readText()
+    val gson = Gson()
+    val jsonObject = gson.fromJson(jsonString, Map::class.java)
+    return Pair(gson, jsonObject)
 }
 
 private fun createJsonBasedOnActions(
     gson: Gson,
-    actionsResults: MutableList<ShipActionResult>
+    outputPortData: List<PortData>,
+    outputShipsData: List<ShipData>
 ) {
-    val actionsResultsJSON = gson.toJson(actionsResults)
-    File("src/main/kotlin/lab2/Output.json").writeText(actionsResultsJSON)
-}
-
-private fun loadJsonAndCreateGsonMap(): Triple<String, Gson, Map<*, *>> {
-    val jsonString = File("src/main/kotlin/lab2/Input.json").readText()
-    val gson = Gson()
-    val jsonObject = gson.fromJson(jsonString, Map::class.java)
-    return Triple(jsonString, gson, jsonObject)
+    val portsAndShipsMap = mapOf(
+        "ports" to outputPortData,
+        "ships" to outputShipsData
+    )
+    val portsAndShipsResultsJSON = gson.toJson(portsAndShipsMap)
+    File("src/main/kotlin/lab2/Output.json").writeText(portsAndShipsResultsJSON)
 }
 
 private fun loadAndExecuteActionsFromJson(
     jsonObject: Map<*, *>,
     gson: Gson,
-    ship: Ship,
+    ships: List<Ship>,
     containers: List<Container>,
     ports: List<Port>,
-    actionsResults: MutableList<ShipActionResult>
+    outputPortData: MutableList<PortData>,
+    outputShipData: MutableList<ShipData>
 ) {
     try {
-        (jsonObject["actions"] as List<*>).map {
-            val actionData = gson.fromJson(gson.toJson(it), ActionData::class.java)
+        (jsonObject["actions"] as List<*>).map { action ->
+            val actionData = gson.fromJson(gson.toJson(action), ActionData::class.java)
+
+            val ship = actionData.ship
 
             when (actionData.action) {
-                "load" -> executeLoadAction(actionData, ship, containers, actionsResults)
-                "unload" -> executeUnloadAction(actionData, ship, containers, actionsResults)
-                "sail" -> executeSailAction(ship, ports, actionData, actionsResults)
-                "refuel" -> executeRefuelAction(ship, actionData, actionsResults)
-                else -> actionsResults.add(ShipActionResult("[Error] Invalid action in Input.json/\"actions\". " +
-                        "Must be one of the following: load, unload, sail, refuel. Please check your json file and try again."))
+                "load" -> executeLoadAction(actionData, ships[ship], containers)
+                "unload" -> executeUnloadAction(actionData, ships[ship], containers)
+                "sail" -> executeSailAction(ships[ship], ports, actionData)
+                "refuel" -> executeRefuelAction(ships[ship], actionData)
+                else -> println("[Error] Invalid action in Input.json/\"actions\". " +
+                        "Must be one of the following: load, unload, sail, refuel. Please check your json file and try again.")
             }
-            actionsResults.add(ShipActionResult("Current containers on ship: ${ship.getCurrentContainers()}"))
         }
+        convertPortToPortData(ports, outputPortData)
+        convertShipToShipData(ships, outputShipData)
     } catch (e: JsonSyntaxException) {
-        actionsResults.add(ShipActionResult("[Error] Unable to perform the action. Json structure not followed" +
-                " Please make sure the names are correct and there is no mistake with the data types."))
+        println("[Error] Unable to perform the action. Json structure not followed" +
+                " Please make sure the names are correct and there is no mistake with the data types.")
+    }
+}
+
+private fun convertPortToPortData(
+    ports: List<Port>,
+    outputPortData: MutableList<PortData>
+) {
+    ports.forEach { port ->
+        val currentShipsAsString = port.current.map { it.toString() }
+        val historyShipsAsString = port.history.map { it.toString() }
+        val containersAsString = port.containersList.map { it.toString() }
+
+        outputPortData.add(
+            PortData(
+                id = port.id,
+                latitude = port.latitude,
+                longitude = port.longitude,
+                current = currentShipsAsString,
+                history = historyShipsAsString,
+                container = containersAsString
+            )
+        )
+    }
+}
+
+private fun convertShipToShipData(
+    ships: List<Ship>,
+    outputShipData: MutableList<ShipData>
+) {
+    ships.forEach { ship ->
+        val containersAsString = ship.getCurrentContainers().map { it.toString() }
+
+        outputShipData.add(ShipData(
+            id = ship.id,
+            fuel = ship.fuel,
+            portId = ship.currentPort.id,
+            totalWeightCapacity = ship.totalWeightCapacity,
+            maxNumberOfAllContainers = ship.maxNumberOfAllContainers,
+            maxNumberOfBasicContainers = ship.maxNumberOfBasicContainers,
+            maxNumberOfHeavyContainers = ship.maxNumberOfHeavyContainers,
+            maxNumberOfRefrigeratedContainers = ship.maxNumberOfRefrigeratedContainers,
+            maxNumberOfLiquidContainers = ship.maxNumberOfLiquidContainers,
+            fuelConsumptionPerKM = ship.fuelConsumptionPerKM,
+            containers = containersAsString
+        ))
     }
 }
 
 private fun executeLoadAction(
     actionData: ActionData,
     ship: Ship,
-    containers: List<Container>,
-    actionsResults: MutableList<ShipActionResult>
+    containers: List<Container>
 ) {
     for (index in actionData.containers) {
-        if (index >= 0 && index < containers.size) {
+        if (index in containers.indices) {
             val isSuccess = ship.load(containers[index])
-            actionsResults.add(ShipActionResult("Trying to load ${containers[index]} on ship ${ship.id}... " +
-                    "Result: $isSuccess"))
+            println("Trying to load ${containers[index]} on ship ${ship.id}... Result: $isSuccess")
         } else {
-            actionsResults.add(ShipActionResult("[Error] Incorrect container index or missing container. Please fill in your JSON correctly!"))
+            println("[Error] Incorrect container index or missing container. Please fill in your JSON correctly!")
         }
     }
 }
@@ -120,16 +172,14 @@ private fun executeLoadAction(
 private fun executeUnloadAction(
     actionData: ActionData,
     ship: Ship,
-    containers: List<Container>,
-    actionsResults: MutableList<ShipActionResult>
+    containers: List<Container>
 ) {
     for (index in actionData.containers) {
-        if (index >= 0 && index < containers.size) {
+        if (index in containers.indices) {
             val isSuccess = ship.unLoad(containers[index])
-            actionsResults.add(ShipActionResult("Trying to unload ${containers[index]} from ship ${ship.id}... " +
-                    "Result: $isSuccess"))
+            println("Trying to unload ${containers[index]} from ship ${ship.id}... Result: $isSuccess")
         } else {
-            actionsResults.add(ShipActionResult("[Error] Incorrect container index or missing container. Please fill in your JSON correctly!"))
+            println("[Error] Incorrect container index or missing container. Please fill in your JSON correctly!")
         }
     }
 }
@@ -138,60 +188,55 @@ private fun executeSailAction(
     ship: Ship,
     ports: List<Port>,
     actionData: ActionData,
-    actionsResults: MutableList<ShipActionResult>
 ) {
     val isSuccess = ship.sailTo(ports[actionData.port])
-    if(isSuccess) ship.changeCurrentPort(ports[actionData.port])
-
-    actionsResults.add(ShipActionResult("Sail to next port... Result: $isSuccess"))
+    if (isSuccess) ship.changeCurrentPort(ports[actionData.port])
+    println("Sail to next port... Result: $isSuccess")
 }
 
 private fun executeRefuelAction(
     ship: Ship,
-    actionData: ActionData,
-    actionsResults: MutableList<ShipActionResult>
+    actionData: ActionData
 ) {
     ship.reFuel(actionData.newFuel)
-    actionsResults.add(ShipActionResult("Ship refueled successfully."))
+    println("Ship refueled successfully.")
 }
 
-private fun getShip(
+private fun getShips(
+    jsonObject: Map<*, *>,
     gson: Gson,
-    jsonString: String,
-    ports: List<Port>,
-    actionsResults: MutableList<ShipActionResult>
-): Ship? {
+    ports: List<Port>
+): List<Ship>? {
     return try {
-        val shipJsonObject = gson.fromJson(jsonString, JsonObject::class.java)
-        val shipSpecifications =
-            gson.fromJson(shipJsonObject.getAsJsonObject("shipSpecs"), ShipSpecificationsData::class.java)
+        val ships = (jsonObject["ships"] as List<*>).map {
+            val shipsData = gson.fromJson(gson.toJson(it), ShipData::class.java)
 
-        val shipSpecificationsData = with(shipSpecifications) {
-            ShipSpecifications(
-                id = id,
-                fuel = fuel,
-                currentPort = ports[port],
-                totalWeightCapacity = totalWeightCapacity,
-                maxNumberOfAllContainers = maxNumberOfAllContainers,
-                maxNumberOfBasicContainers = maxNumberOfBasicContainers,
-                maxNumberOfHeavyContainers = maxNumberOfHeavyContainers,
-                maxNumberOfRefrigeratedContainers = maxNumberOfRefrigeratedContainers,
-                maxNumberOfLiquidContainers = maxNumberOfLiquidContainers,
-                fuelConsumptionPerKM = fuelConsumptionPerKM
-            )
+            with(shipsData) {
+                Ship(
+                    id = id,
+                    fuel = fuel,
+                    currentPort = ports[portId],
+                    totalWeightCapacity = totalWeightCapacity,
+                    maxNumberOfAllContainers = maxNumberOfAllContainers,
+                    maxNumberOfBasicContainers = maxNumberOfBasicContainers,
+                    maxNumberOfHeavyContainers = maxNumberOfHeavyContainers,
+                    maxNumberOfRefrigeratedContainers = maxNumberOfRefrigeratedContainers,
+                    maxNumberOfLiquidContainers = maxNumberOfLiquidContainers,
+                    fuelConsumptionPerKM = fuelConsumptionPerKM
+                )
+            }
         }
-        Ship(shipSpecificationsData)
+        ships
     } catch (e: JsonSyntaxException) {
-        actionsResults.add(ShipActionResult("[Error] Unable to create a ship. Json structure not followed" +
-                " Please make sure the names are correct and there is no mistake with the data types."))
+        println("[Error] Unable to create a ship. Json structure not followed" +
+                " Please make sure the names are correct and there is no mistake with the data types.")
         null
     }
 }
 
 private fun getContainers(
     jsonObject: Map<*, *>,
-    gson: Gson,
-    actionsResults: MutableList<ShipActionResult>
+    gson: Gson
 ): List<Container>? {
     return try {
         val containers = (jsonObject["containers"] as List<*>).map {
@@ -206,8 +251,8 @@ private fun getContainers(
         }
         containers
     } catch (e: JsonSyntaxException) {
-        actionsResults.add(ShipActionResult("[Error] Unable to create a container. Json structure not followed" +
-                " Please make sure the names are correct and there is no mistake with the data types."))
+        println("[Error] Unable to create a container. Json structure not followed" +
+                " Please make sure the names are correct and there is no mistake with the data types.")
         null
     }
 }
@@ -215,21 +260,31 @@ private fun getContainers(
 private fun getPorts(
     jsonObject: Map<*, *>,
     gson: Gson,
-    actionsResults: MutableList<ShipActionResult>
+    containers: List<Container>
 ): List<Port>? {
     return try {
         val ports = (jsonObject["ports"] as List<*>).map {
             val portsData = gson.fromJson(gson.toJson(it), PortData::class.java)
+            val containersToAdd = mutableListOf<Container>()
+
+            // TODO: видалення контейнера з ліста порту
+            // TODO: require
+            // TODO: розкинути по пекеджах
+            for (index in portsData.container) {
+                containersToAdd.add(containers[index.toDouble().toInt()])
+            }
+
             Port(
                 id = portsData.id,
                 latitude = portsData.latitude,
-                longitude = portsData.longitude
+                longitude = portsData.longitude,
+                containersList = containersToAdd
             )
         }
         ports
     } catch (e: JsonSyntaxException) {
-        actionsResults.add(ShipActionResult("[Error] Unable to create a port. Json structure not followed" +
-                " Please make sure the names are correct and there is no mistake with the data types."))
+        println("[Error] Unable to create a port. Json structure not followed" +
+                " Please make sure the names are correct and there is no mistake with the data types.")
         null
     }
 }

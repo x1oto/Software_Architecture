@@ -1,0 +1,29 @@
+*****************************
+AboutLab2.txt - Assignment Overview
+*****************************
+
+**Software Architecture Assignment 2 - Port Management System**
+
+**CS 121, Third Year Students**
+
+**Due Date: October 6, 2023**
+
+*Overview:*
+This assignment challenges third-year CS 121 students to delve into the implementation of inheritance and abstract classes/interfaces within the realm of software architecture. It necessitates a solid understanding of object-oriented design principles, urging students to apply them in a practical simulation of a port management system. Students are allowed to choose any programming language that supports OOP, provided they follow SOLID principles and maintain proper code commenting.
+
+*Description:*
+The task involves creating a simulation where ports and ships interact, and ships transport various container types. Container types include basic, heavy, refrigerated, and liquid, each requiring specific handling. The assignment revolves around analyzing input requests and executing corresponding actions, such as loading/unloading containers, sailing between ports, and refueling ships. It's crucial to note that there is no user interaction during execution; the program parses input files with sequential operations.
+
+*Classes and Implementation Details:*
+The class hierarchy includes Main, Port, Ship, Container, BasicContainer, HeavyContainer, RefrigeratedContainer, and LiquidContainer. Each class has specific responsibilities and relationships. The assignment provides interfaces IPort and IShip, dictating required methods that must be implemented.
+
+*Instructions and Actions:*
+Students are tasked with creating containers and ships, loading/unloading containers, sailing ships between ports, and refueling. Actions are dictated by data in a JSON file. Container creation depends on weight, with differentiation between basic and heavy containers. Special heavy containers are denoted by "R" or "L" for refrigerated and liquid, respectively.
+
+*Output Format:*
+The output includes details about ports, containers, and ships, formatted in ascending order of port IDs. Each port displays its location, containers, and ships with fuel left. Ship details include types and counts of containers on board.
+
+*Remarks:*
+Students have the flexibility to enhance the proposed logic and classes while adhering to chosen programming language standards. Proper documentation, code formatting, and adherence to the provided class hierarchy are essential. This assignment sets the foundation for the subsequent one, building on the concepts of this port management system simulation.
+
+*****************************
