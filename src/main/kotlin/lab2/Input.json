@@ -4,12 +4,24 @@
       "id": 0,
       "latitude": 48.8566,
       "longitude": 2.3522,
-      "container": [0, 1]
+      "container": [0, 1, 2]
     },
     {
       "id": 1,
       "latitude": 40.7128,
       "longitude": -74.0060,
+      "container": []
+    },
+    {
+      "id": 2,
+      "latitude": 48.8566,
+      "longitude": 2.3522,
+      "container": []
+    },
+    {
+      "id": 3,
+      "latitude": 37.7749,
+      "longitude": -122.4194,
       "container": []
     }
   ],
@@ -96,28 +108,23 @@
 
   "actions": [
     {
+      "action": "load",
+      "containers": [0, 1],
+      "ship": 0
+    },
+    {
+      "action": "load",
+      "containers": [2],
+      "ship": 0
+    },
+    {
       "action": "sail",
       "port": 1,
       "ship": 0
     },
     {
-      "action": "sail",
-      "port": 0,
-      "ship": 1
-    },
-    {
-      "action": "load",
-      "containers": [2, 5],
-      "ship": 0
-    },
-    {
-      "action": "load",
-      "containers": [2, 5],
-      "ship": 0
-    },
-    {
       "action": "unload",
-      "containers": [2, 5],
+      "containers": [0, 1, 2],
       "ship": 0
     }
   ]

@@ -89,7 +89,6 @@ private fun loadAndExecuteActionsFromJson(
     try {
         (jsonObject["actions"] as List<*>).map { action ->
             val actionData = gson.fromJson(gson.toJson(action), ActionData::class.java)
-
             val ship = actionData.ship
 
             when (actionData.action) {
@@ -191,7 +190,7 @@ private fun executeSailAction(
 ) {
     val isSuccess = ship.sailTo(ports[actionData.port])
     if (isSuccess) ship.changeCurrentPort(ports[actionData.port])
-    println("Sail to next port... Result: $isSuccess")
+    println("Sail to port ${ports[actionData.port].id}... Result: $isSuccess")
 }
 
 private fun executeRefuelAction(
@@ -267,9 +266,6 @@ private fun getPorts(
             val portsData = gson.fromJson(gson.toJson(it), PortData::class.java)
             val containersToAdd = mutableListOf<Container>()
 
-            // TODO: видалення контейнера з ліста порту
-            // TODO: require
-            // TODO: розкинути по пекеджах
             for (index in portsData.container) {
                 containersToAdd.add(containers[index.toDouble().toInt()])
             }

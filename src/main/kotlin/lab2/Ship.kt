@@ -15,7 +15,6 @@ class Ship(
     private val containers = mutableListOf<Container>()
     fun getCurrentContainers(): List<Container> = containers.sortedBy { container -> container.id }
     fun changeCurrentPort(p: Port) { currentPort = p }
-
     private fun totalContainersWeight() = containers.sumOf { container -> container.weight }
     private fun containersFuelConsumption() = containers.sumOf { container -> container.consumption() }
 
@@ -47,13 +46,14 @@ class Ship(
         p.incomingShip(s = this)
     }
 
-
     override fun load(cont: Container): Boolean {
         return if (canLoadContainerByType(cont) &&
-            (totalContainersWeight() <= totalWeightCapacity) &&
-            (containers.size <= maxNumberOfAllContainers)
+            totalContainersWeight() <= totalWeightCapacity &&
+            containers.size <= maxNumberOfAllContainers &&
+            currentPort.containersList.remove(cont)
         ) {
             containers.add(cont)
+            true
         } else false
     }
 
