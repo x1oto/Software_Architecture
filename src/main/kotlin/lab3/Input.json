@@ -29,71 +29,54 @@
   "containers": [
     {
       "id": 0,
-      "type": "basicContainer",
+      "type": "basic",
       "items": [
         {
           "id": 0,
-          "weight": 100,
-          "count": 5
+          "weight": 100.0,
+          "count": 5,
+          "type": "small"
         },
         {
           "id": 1,
-          "weight": 250,
-          "count": 2
+          "weight": 250.0,
+          "count": 20,
+          "type": "small"
         }
       ]
     },
     {
       "id": 1,
       "weight": 3500,
-      "type": "heavyContainer"
+      "type": "heavy",
+      "items": [
+        {
+          "id": 0,
+          "weight": 100.0,
+          "count": 5,
+          "type": "heavy"
+        }
+      ]
     },
     {
       "id": 2,
       "weight": 3500,
-      "type": "heavyContainer"
-    },
-    {
-      "id": 3,
-      "weight": 3500,
-      "type": "heavyContainer"
-    },
-    {
-      "id": 4,
-      "weight": 3500,
-      "type": "liquidContainer"
-    },
-    {
-      "id": 5,
-      "weight": 2000,
-      "type": "basicContainer"
-    },
-    {
-      "id": 6,
-      "weight": 4000,
-      "type": "heavyContainer"
-    },
-    {
-      "id": 7,
-      "weight": 5000,
-      "type": "heavyContainer"
-    },
-    {
-      "id": 8,
-      "weight": 2500,
-      "type": "liquidContainer"
-    },
-    {
-      "id": 9,
-      "weight": 3000,
-      "type": "refrigeratedContainer"
+      "type": "heavy",
+      "items": [
+        {
+          "id": 0,
+          "weight": 100.0,
+          "count": 5,
+          "type": "heavy"
+        }
+      ]
     }
   ],
 
   "ships": [
     {
       "id": 0,
-      "fuel": 90000.0,
+      "fuel": 80000.0,
       "port": 0,
       "totalWeightCapacity": 12000,
       "maxNumberOfAllContainers": 15,
@@ -135,7 +118,7 @@
     },
     {
       "action": "unload",
-      "containers": [0, 1, 2],
+      "containers": [0],
       "ship": 0
     }
   ]
