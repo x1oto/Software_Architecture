@@ -1,0 +1,211 @@
+package lab5
+
+abstract class Piece(
+    var position: Pair<Int, Int>,
+    private val color: String,
+    var numberOfMoves: Int,
+    val moveRule: MoveRule
+) {
+    abstract fun move(newPosition: Pair<Int, Int>): Map<String, Any>
+
+    companion object {
+        fun checkPositionRange(position: Pair<Int, Int>): Boolean {
+            return position.first in 1..8 && position.second in 1..8
+        }
+    }
+
+    override fun toString(): String {
+        return "Piece at $position, Color: $color, Moves: $numberOfMoves"
+    }
+
+    abstract fun printInfo()
+}
+
+class Knight(
+    position: Pair<Int, Int>,
+    color: String
+): Piece(position, color, 0, KnightMove(position)) {
+
+    override fun move(newPosition: Pair<Int, Int>): Map<String, Any> {
+        return if (checkPositionRange(newPosition)) {
+            position = newPosition
+            numberOfMoves++
+            val moves = moveRule.getAllMoves()
+            mapOf("valid" to true, "moves" to moves)
+        } else {
+            mapOf("valid" to false, "error" to "Invalid position")
+        }
+    }
+
+    override fun printInfo() {
+        println(this.toString())
+    }
+}
+
+class Bishop(
+    position: Pair<Int, Int>,
+    color: String
+): Piece(position, color, 0, BishopMove(position)) {
+
+    override fun move(newPosition: Pair<Int, Int>): Map<String, Any> {
+        return if (checkPositionRange(newPosition)) {
+            position = newPosition
+            numberOfMoves++
+            val moves = moveRule.getAllMoves()
+            mapOf("valid" to true, "moves" to moves)
+        } else {
+            mapOf("valid" to false, "error" to "Invalid position")
+        }
+    }
+
+    override fun printInfo() {
+        println(this.toString())
+    }
+}
+
+
+class King(
+    position: Pair<Int, Int>,
+    color: String
+): Piece(position, color, 0, KingMove(position)) {
+
+    override fun move(newPosition: Pair<Int, Int>): Map<String, Any> {
+        return if (checkPositionRange(newPosition)) {
+            position = newPosition
+            numberOfMoves++
+            val moves = moveRule.getAllMoves()
+            mapOf("valid" to true, "moves" to moves)
+        } else {
+            mapOf("valid" to false, "error" to "Invalid position")
+        }
+    }
+
+    override fun printInfo() {
+        println(this.toString())
+    }
+}
+
+
+class Rook(
+    position: Pair<Int, Int>,
+    color: String
+): Piece(position, color, 0, RookMove(position)) {
+
+    override fun move(newPosition: Pair<Int, Int>): Map<String, Any> {
+        return if (checkPositionRange(newPosition)) {
+            position = newPosition
+            numberOfMoves++
+            val moves = moveRule.getAllMoves()
+            mapOf("valid" to true, "moves" to moves)
+        } else {
+            mapOf("valid" to false, "error" to "Invalid position")
+        }
+    }
+
+    override fun printInfo() {
+        println(this.toString())
+    }
+}
+
+
+class KnightMove(position: Pair<Int, Int>) : MoveRule(position) {
+    override fun getAllMoves(): List<Pair<Int, Int>> {
+        val (x, y) = position
+        val moves = mutableListOf<Pair<Int, Int>>()
+
+        val possibleMoves = listOf(
+            Pair(2, 1), Pair(1, 2),
+            Pair(2, -1), Pair(1, -2),
+            Pair(-2, 1), Pair(-1, 2),
+            Pair(-2, -1), Pair(-1, -2)
+        )
+
+        for ((dx, dy) in possibleMoves) {
+            val newX = x + dx
+            val newY = y + dy
+
+            if (Piece.checkPositionRange(Pair(newX, newY))) {
+                moves.add(Pair(newX, newY))
+            }
+        }
+
+        return moves
+    }
+}
+
+class BishopMove(position: Pair<Int, Int>) : MoveRule(position) {
+    override fun getAllMoves(): List<Pair<Int, Int>> {
+        val (x, y) = position
+        val moves = mutableListOf<Pair<Int, Int>>()
+
+        for (i in 1..7) {
+            addMoveIfValid(x + i, y + i, moves)
+            addMoveIfValid(x - i, y + i, moves)
+            addMoveIfValid(x + i, y - i, moves)
+            addMoveIfValid(x - i, y - i, moves)
+        }
+
+        return moves
+    }
+
+    private fun addMoveIfValid(x: Int, y: Int, moves: MutableList<Pair<Int, Int>>) {
+        if (Piece.checkPositionRange(Pair(x, y))) {
+            moves.add(Pair(x, y))
+        }
+    }
+}
+
+class KingMove(position: Pair<Int, Int>) : MoveRule(position) {
+    override fun getAllMoves(): List<Pair<Int, Int>> {
+        val (x, y) = position
+        val moves = mutableListOf<Pair<Int, Int>>()
+
+        val possibleMoves = listOf(
+            Pair(x + 1, y), Pair(x - 1, y),
+            Pair(x, y + 1), Pair(x, y - 1),
+            Pair(x + 1, y + 1), Pair(x - 1, y + 1),
+            Pair(x + 1, y - 1), Pair(x - 1, y - 1)
+        )
+
+        for ((newX, newY) in possibleMoves) {
+            if (Piece.checkPositionRange(Pair(newX, newY))) {
+                moves.add(Pair(newX, newY))
+            }
+        }
+
+        return moves
+    }
+}
+
+class RookMove(position: Pair<Int, Int>) : MoveRule(position) {
+    override fun getAllMoves(): List<Pair<Int, Int>> {
+        val (x, y) = position
+        val moves = mutableListOf<Pair<Int, Int>>()
+
+        for (i in 1..7) {
+            addMoveIfValid(x + i, y, moves)
+            addMoveIfValid(x - i, y, moves)
+            addMoveIfValid(x, y + i, moves)
+            addMoveIfValid(x, y - i, moves)
+        }
+
+        return moves
+    }
+
+    private fun addMoveIfValid(x: Int, y: Int, moves: MutableList<Pair<Int, Int>>) {
+        if (Piece.checkPositionRange(Pair(x, y))) {
+            moves.add(Pair(x, y))
+        }
+    }
+}
+
+abstract class MoveRule(val position: Pair<Int, Int>) {
+    abstract fun getAllMoves(): List<Pair<Int, Int>>
+}
+
+fun main() {
+    val knight = Knight(Pair(1, 1), color = "White")
+    println(knight.move(Pair(3, 2)))
+    println(knight.move(Pair(5, 3)))
+    knight.printInfo()
+}
